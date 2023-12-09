@@ -9,6 +9,8 @@ import {
   Web3Modal,
 } from "@web3modal/wagmi-react-native";
 import Home from "./screens/Home";
+import ProfileScreen from "./screens/ProfileScreen";
+import CreateScreen from "./screens/CreateScreen";
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = "4693d02b88d3b23c6d072f0e071c86f5";
@@ -40,6 +42,8 @@ export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
       <Home />
+      {/* <ProfileScreen/> */}
+      {/* <CreateScreen/> */}
       {/* <View style={styles.container}>
         <Text>Open up App.js to start working on your app!</Text>
 
