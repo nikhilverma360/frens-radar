@@ -1,30 +1,28 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import React from "react";
-import { W3mButton} from "@web3modal/wagmi-react-native";
+import React, { useState } from "react";
+import { W3mButton } from "@web3modal/wagmi-react-native";
 import useBLE from "../hooks/useBLE";
+import SearchScreen from "./SearchScreen";
+import SearchingScreen from "./SearchingScreen";
 
 const Home = () => {
-  const {
-    requestPermissions,
-    scanForPeripherals,
-  } = useBLE();
+  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
+  const [isSearching, setSearching] = useState(false);
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
     if (isPermissionsEnabled) {
       scanForPeripherals();
-      console.log("btn pressed")
+      console.log("btn pressed");
     }
   };
-  return (
-    <View style={styles.container}>
-      <Text>home</Text>
-      <Pressable style={styles.button} onPress={scanForDevices}>
-        <Text style={styles.buttonText}>Find</Text>
-      </Pressable>
-      <W3mButton />
-    </View>
-  );
+
+  function search() {
+    scanForDevices();
+    setSearching(isSearching ? false : true);
+  }
+
+  return isSearching ? <SearchingScreen devices={allDevices}  /> : <SearchScreen setState={search} />;
 };
 
 export default Home;
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   button: {
     alignItems: "center",
