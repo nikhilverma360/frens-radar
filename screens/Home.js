@@ -5,7 +5,7 @@ import useBLE from "../hooks/useBLE";
 import SearchScreen from "./SearchScreen";
 import SearchingScreen from "./SearchingScreen";
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
   const [isSearching, setSearching] = useState(false);
 
@@ -22,7 +22,7 @@ const Home = () => {
     setSearching(isSearching ? false : true);
   }
 
-  return isSearching ? <SearchingScreen devices={allDevices}  /> : <SearchScreen setState={search} />;
+  return isSearching ? <SearchingScreen devices={allDevices} navigation = {navigation} /> : <SearchScreen setState={search}/>;
 };
 
 export default Home;
