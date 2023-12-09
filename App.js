@@ -9,8 +9,11 @@ import {
   Web3Modal,
 } from "@web3modal/wagmi-react-native";
 import Home from "./screens/Home";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from "./screens/ProfileScreen";
 import CreateScreen from "./screens/CreateScreen";
+import UserScreen from "./screens/UserScreen";
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = "4693d02b88d3b23c6d072f0e071c86f5";
@@ -38,10 +41,17 @@ createWeb3Modal({
   wagmiConfig,
 });
 
+const Stack = createNativeStackNavigator();
+
 export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <Home />
+      <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="UserScreen" component={UserScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
       {/* <ProfileScreen/> */}
       {/* <CreateScreen/> */}
       {/* <View style={styles.container}>

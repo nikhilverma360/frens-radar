@@ -1,20 +1,16 @@
 /* eslint-disable no-bitwise */
 import { useMemo, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
-import {
-
-  BleManager,
-  
-  Device,
-  ScanMode,
-} from "react-native-ble-plx";
+import { BleManager, Device, ScanMode } from "react-native-ble-plx";
 
 import * as ExpoDevice from "expo-device";
-
 
 function useBLE() {
   const bleManager = useMemo(() => new BleManager(), []);
   const [allDevices, setAllDevices] = useState([]);
+  const [distance, setDistance] = useState(-1);
+  const distanceBuffer = [-1, -1, -1];
+  let numOfSamples = 0;
 
   const ProfileRegex = /^[a-zA-Z0-9-]+\.([lL][eE][nN][sS]|[eE][tT][hH])$/;
 
@@ -78,39 +74,44 @@ function useBLE() {
     devices.findIndex((device) => nextDevice.id === device.id) > -1;
 
   const scanForPeripherals = () =>
-    bleManager.startDeviceScan(null,  {
-      allowDuplicates: true,
-      scanMode: ScanMode.LowLatency,
-    }, (error, device) => {
-      if (error) {
-        console.log(error);
-      }
-      if (device ) {
-        
+    bleManager.startDeviceScan(
+      null,
+      {
+        allowDuplicates: true,
+        scanMode: ScanMode.LowLatency,
+      },
+      (error, device) => {
+        if (error) {
+          console.log(error);
+        }
+        if (device) {
+          setAllDevices((prevState) => {
+            if (isDuplicteDevice(prevState, device)) {
+              const updatedRssi = [...prevState];
+              updatedRssi[
+                updatedRssi.findIndex((item) => item.id === device.id)
+              ] = device;
+              console.log("Updated Rssi --->", updatedRssi[1]?.rssi);
+              // return [...prevState, device];
+            }
 
-        setAllDevices((prevState) => {
-           if (isDuplicteDevice(prevState, device)) {
-                const updatedRssi = [...prevState]
-                updatedRssi[updatedRssi.findIndex(item => item.id === device.id)] = device
-                console.log("Updated Rssi --->", updatedRssi[1])
-            // return [...prevState, device];
-           }
-          
-          if (!isDuplicteDevice(prevState, device) && ProfileRegex.test(device.name)) {
-            
-
-            console.log("Devices --->", device.id)
-            return [...prevState, device];
-          }
-          return prevState;
-        });
+            if (
+              !isDuplicteDevice(prevState, device) &&
+              ProfileRegex.test(device.name)
+            ) {
+              console.log("Devices --->", device.id);
+              return [...prevState, device];
+            }
+            return prevState;
+          });
+        }
       }
-    });
+    );
 
   return {
     scanForPeripherals,
     requestPermissions,
-    allDevices
+    allDevices,
   };
 }
 
