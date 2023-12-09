@@ -110,6 +110,7 @@ function useBLE() {
   return {
     scanForPeripherals,
     requestPermissions,
+    allDevices
   };
 }
 
